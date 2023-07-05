@@ -1,0 +1,82 @@
+
+<%- include("../adminLayouts/adminHeader.ejs") %>
+<%- include("../adminLayouts/adminSidebar.ejs") %>
+<%- include("../adminLayouts/adminNavbar.ejs") %>
+<div class="main-panel">
+<div class="content-wrapper">
+  <div class="row">
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+            <a href="/admin/addProduct" ><button>Add Product</button></a>
+          <table class="table table-dark">
+           <thead>
+              <tr>
+                <th> No</th>
+                <th>PRODUCT IMAGE </th>
+                <th> PRODUT NAME</th>
+                <th>PRICE</th>
+                <th>BRAND</th>
+                <th>CATEGORY</th>
+                <th>STOCK</th>
+                <th>ACTION</th>
+              </tr>  
+            </thead>
+
+              <tbody>
+                <% if(product.length>0){
+                  for(let i=0; i<product.length; i++){%>
+                    <tr>
+                      <td>
+                        <%=i+1 %>
+                        </td>
+                        <td>
+                        <% for(let j=0; j<1; j++){%>
+                          <img style="width: 50px;height: 50px;border-radius:0px;"  
+                          src="/adminAssets/adminImage/<%= product[i].productImage[j]%>" alt="No image">
+                       <% } %>
+                       </td>
+
+                       
+                       <td>
+                                <%= product[i].productName %>
+                              </td>
+                              <td>
+                                <%= product[i].productPrice %>
+                               
+                              </td>
+                              <td>
+                                <%= product[i].productBrand %>
+                              </td>
+                              <td>
+                                <%= product[i].category %>
+                              </td>
+                             
+                              <td>
+                                <%= product[i].productStock %>
+                              </td>
+
+                              <td>
+                                
+                                <a type="button" class="btn btn-success" href="/admin/editproduct/<%= product[i]._id %>">Edit</a>
+                                <a class="btn btn-dark" href="/admin/deleteProduct?id=<%= product[i]._id %>" onclick="return confirm('Are you sure you want to Delete <%= product[i].productName %>?')">Delete</a>
+                              </td>
+                        </tr>
+                  <%}}
+                  else{%>
+                  <tr>
+                     <td colspan="5">Users not found</td>
+                      </tr>
+                    <% } %>
+             </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<%- include("../adminLayouts/adminFooter.ejs")  %>
