@@ -34,7 +34,6 @@
                 </div><!-- End .checkout-discount -->         
 
 
-
                 <form action="#" id="checkoutForm">
                     <div class="row">
                         <div class="col-lg-9"> 
@@ -42,12 +41,13 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                   <div class="d-flex justify-content-end pb-2">
-                                    <a href="" type="button" class="btn btn-outline-primary-2" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> Add
+                                    <a href="/addAddress" type="button" class="btn btn-outline-primary-2"> Add
                                         Address</a>
                                   </div>
 
                                   <% if(address){
-                                    address.forEach((address)=>{
+
+                                    address.addresses.forEach((address)=>{
                                         %>
 
                                         <div class="card card-dashboard">
@@ -73,9 +73,9 @@
                                                     <li>landmark :<%= address.landmark %>
                                                     </li>
                                                     <a>
-                                                        <button class="btn btn-outline-primary-2" data-bs-toggle="modal" data-bs-target="#editModal-">
+                                                        <a href="/editaddress?id=<%= address._id %>"  class="btn btn-outline-primary-2">
                                                             Edit
-                                                        </button>
+                                                        <a/>
                                                     </a>
                                                     <button onclick="deleteCheckoutAddress" type="button" class="btn btn-outline-primary-2">
                                                         Delete
@@ -83,7 +83,9 @@
                                                 </ul>
                                         </div><!-- End .card-dashboard -->
                                 </div>
-                           <% })  } %>
+                           <% })  }else{ %>
+                            <h1>no address added</h1>
+                            <% } %>
                               
                             </div><!-- End .col-lg-12 -->
                         </div><!-- End .row -->
@@ -136,10 +138,9 @@
                               </div>
                             </div><!-- End .accordion -->
 
-                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
-                                <span class="btn-text">Place Order</span>
-                                <span class="btn-hover-text">Proceed to Checkout</span>
-                            </button>
+                            <a href="/checkoutPage" class="btn btn-outline-primary-2 btn-order btn-block">Place Order</a>
+
+                           
                         </div><!-- End .summary -->
                     </aside><!-- End .col-lg-3 -->
                 </div><!-- End .row -->

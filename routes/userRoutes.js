@@ -5,6 +5,7 @@ const userController = require('../Controllers/usercontroller');
 const cartController = require('../Controllers/cart-controller');
 const wishlistController = require("../Controllers/wishlistController")
 const checkoutController = require("../Controllers/checkoutController")
+const addressController = require('../Controllers/addressController')
 const auth = require('../middleware/userAuth');
 
 
@@ -52,5 +53,11 @@ userRoutes.get('/deleteSingleWishlist/:id',auth.isLogin,wishlistController.delet
 // ---------------- CHECKOUT ROUTES --------------------//
 userRoutes.get('/checkoutPage',auth.isLogin,checkoutController.loadCheckout)
 
+
+// ---------------- ADDRESS ROUTES --------------------//
+userRoutes.get('/addAddress',auth.isLogin,addressController.loadUserAddress)
+userRoutes.post('/addAddress',auth.isLogin,addressController.inserUserAddress)
+userRoutes.get('/editaddress',auth.isLogin,addressController.editUserAddress)
+userRoutes.post('/editaddress',auth.isLogin,addressController.updatedAddress)
 
 module.exports = userRoutes;
