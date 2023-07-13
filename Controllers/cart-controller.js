@@ -11,10 +11,6 @@ const loadCart = async (req, res) => {
       const session = req.session.user_id;
       const userData = await User.findById(req.session.user_id);
       const cartData = await Cart.findOne({ userId: req.session.user_id }).populate("products.productid");
-      const products = cartData.products;
-
-      console.log(products);
-
       
       if(req.session.user_id){
         if(cartData){
@@ -30,11 +26,18 @@ const loadCart = async (req, res) => {
 
         const Total = total.length > 0 ? total[0].total : 0; 
         
+        const products = cartData.products;
+
+        res.render("cartPage", { user: userData,Total:Total,session, products:products});   
         
-        res.render("cartPage", { user: userData,Total:Total,session, products});   
-        
+          }else{
+        res.render("cartPage", { user: userData,session, products:[]});   
+
           }
-        }
+        }else{
+          res.render("cartPage", { user: userData,session, products:[]});   
+  
+            }
       } 
       
     } catch (error) {

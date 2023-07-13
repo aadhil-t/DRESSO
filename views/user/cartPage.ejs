@@ -22,6 +22,8 @@
     <div class="page-content">
         <div class="cart">
             <div class="container">
+                <% if (products.length > 0){ %>
+
                 <div class="row">
                     <div class="col-lg-9">
                         <table class="table table-cart table-mobile">
@@ -36,8 +38,8 @@
                             </thead>
 
                             <tbody>
-                                <% if (products.length > 0){
-                                    products.forEach((product)=>{ %>
+                                
+                                    <% products.forEach((product)=>{ %>
                                 <tr>
                                     <td class="product-col">
                                         <div class="product">
@@ -77,10 +79,10 @@
                                 </tr>
                                 <% });%>
                                 <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="text-center">No Products Added to Cart</td>
-                                </tr>
-                                <% } %>
+                                    <div class="d-flex justify-content-center">
+                                            <h2 class="text-primary" colspan="5"  style="margin-bottom: 500px;">No Products Added To Cart</h2>
+                                        </div>
+                                        <% } %>
                             </tbody>
                         </table><!-- End .table table-wishlist -->
                     </div><!-- End .col-lg-9 -->
@@ -92,16 +94,16 @@
                                 <tbody>
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
-                     <% if (products.length > 0) {
-         var Subtotal = 0;
-       for (let i = 0; i < products.length ; i++) {
-       Subtotal = Subtotal + products[i].totalPrice;
-     }
-     %>
-     <td>$<%= Subtotal %></td>
-     <% } else { %>
-     <td>0.00</td>
-      <% } %>
+                                                    <% if (products.length > 0) {
+                                        var Subtotal = 0;
+                                      for (let i = 0; i < products.length ; i++) {
+                                      Subtotal = Subtotal + products[i].totalPrice;
+                                    }
+                                    %>
+                                    <td>$<%= Subtotal %></td>
+                                    <% } else { %>
+                                    <td>0.00</td>
+                                   <% } %>
                                     </tr><!-- End .summary-subtotal -->
                                     <tr class="summary-shipping">
                                         <td>Shipping:</td>
@@ -128,15 +130,23 @@
                         </div><!-- End .summary -->
 
                         <a href="shopPage" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
-                    </aside><!-- End .col-lg-3 -->
+                        
+                        
+                        </aside><!-- End .col-lg-3 -->
+                        
                 </div><!-- End .row -->
+                
             </div><!-- End .container -->
+            
         </div><!-- End .cart -->
+        
     </div><!-- End .page-content -->
+    
 </main><!-- End .main -->
 
 </div>
 
+                                
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

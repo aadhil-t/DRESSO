@@ -37,11 +37,11 @@
                 <form id="checkout-form">
                     <div class="row">
                         <div class="col-lg-9"> 
-                            <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->   
+                            <h2 class="checkout-title">User Addresses</h2><!-- End .checkout-title -->   
                             <div class="row">
                                 <div class="col-lg-12">
                                   <div class="d-flex justify-content-end pb-2">
-                                    <a href="/addAddress" type="button" class="btn btn-outline-primary-2"> Add
+                                    <a href="/addProfileAddress" type="button" class="btn btn-outline-primary-2"> Add
                                         Address</a>
                                   </div>
 
@@ -52,8 +52,7 @@
 
                                         <div class="card card-dashboard">
                                             <div class="card-body">
-                                                <input required class="form-check-input pt-5" type="radio" name="selectAddress" id="flexRadioDefault1"
-                                                 value="<%= address.userName %>, <%= address.mobile %>,<%= address.alternativeMob %>,<%= address.housename %>,<%= address.city %>,<%= address.state %>,<%= address.pincode %>,<%= address.landmark %>">
+                                               
                                                 <ul>
                                                     <h3 class="card-title"> Address</h3><!-- End .card-title -->
                                                     <li>Name : <%= address.userName %>        
@@ -73,7 +72,7 @@
                                                     <li>landmark : <%= address.landmark %>
                                                     </li>
                                                     <a>
-                                                        <a href="/editaddress?id=<%= address._id %>"  class="btn btn-outline-primary-2">
+                                                        <a href="/editProfileaddress?id=<%= address._id %>"  class="btn btn-outline-primary-2">
                                                             Edit
                                                         <a/>
                                                     </a>
@@ -90,59 +89,6 @@
                             </div><!-- End .col-lg-12 -->
                         </div><!-- End .row -->
                     </div><!-- End .col-lg-9 -->
-                    <aside class="col-lg-3">
-                        <div class="summary">
-                            <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-                            <table class="table table-summary">
-                                <tbody>
-                                  <tr class="summary-subtotal">
-                                        <td>Wallet Amount:</td>
-                                        <td>₹<span id="totals"></span></td>
-                                    </tr>
-                                    <tr class="summary-subtotal">
-                                        <td>Subtotal:</td>
-                                        <td>₹.00</td>
-                                    </tr><!-- End .summary-subtotal -->
-                                    <tr>
-                                        <td>Delivery charge:</td>
-                                        <td>₹ 80.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Discount:</td>
-                                        <td>₹<span id="discount">.00</td>
-                                    </tr>
-                                    <tr class="summary-total">
-                                        <td>Total:</td>
-                                        <td >₹<span id="total"><%=Total %>.00</span></td>
-                                    </tr><!-- End .summary-total -->
-                                </tbody>
-                            </table><!-- End .table table-summary -->
-                            <div class="accordion-summary">
-                              <div class="d-flex align-items-center">
-                                  <div class="mr-2">
-                                      <input required type="radio" id="walletpayment" name="payment" value="walletpayment">
-                                  </div>
-                                  <a href="" class="d-block text-dark" for="pay1">Wallet </a>
-                              </div>
-                              <div class="d-flex align-items-center">
-                                  <div class="mr-2">
-                                      <input required type="radio" id="COD" name="payment" value="COD">
-                                  </div>
-                                  <a href="" class="d-block text-dark" for="pay1">Cash On Delivery</a>
-                              </div>
-                              <div class="d-flex align-items-center">
-                                  <div class="mr-2">
-                                    <input required type="radio" id="onlinPayment" name="payment" value="onlinPayment">
-                                  </div>
-                                  <a href="" class="d-block text-dark">Razer Pay</a>
-                              </div>
-                            </div><!-- End .accordion -->
-
-                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">Place Order</button>
-
-                           
-                        </div><!-- End .summary -->
-                    </aside><!-- End .col-lg-3 -->
                 </div><!-- End .row -->
             </form>
         </div><!-- End .container -->

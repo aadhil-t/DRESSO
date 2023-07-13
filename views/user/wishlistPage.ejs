@@ -51,7 +51,7 @@
                                     <span class="in-stock"><%= wish.productid.productStock %></span>
                                 </td>
                                 <td class="action-col">
-                                    <button onclick="addtocart('<%= wish.productid._id %>')">
+                                    <button class="btn btn-outline-primary" onclick="addtocart('<%= wish.productid._id %>')">
                                         <i class="icon-cart-plus"></i>Add to Cart
                                     </button>
                                 </td>
@@ -59,9 +59,15 @@
                                     <button class="btn-remove"><i class="icon-close"></i></button>
                                 </td>
                             </tr>
-                    <% }) } %>
+                    <% }) } else{%>
+                        <div class="d-flex justify-content-center">
+                            <h2 class="text-primary"   style="margin-bottom: 500px;">No Products In Wishlist</h2>
+                            </div>
+           <% } %>
                 </tbody>
             </table><!-- End .table table-wishlist -->
+      
+           
             <div class="wishlist-share">
                 <div class="social-icons social-icons-sm mb-2">
                     <label class="social-label">Share on:</label>
