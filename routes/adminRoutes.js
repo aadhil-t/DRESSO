@@ -9,6 +9,7 @@ const auth = require('../middleware/adminAuth');
 const adminController = require('../Controllers/admincontroller');
 const categorycontroller = require('../Controllers/categorycontroller');
 const prductController = require('../Controllers/productController');
+const orderController = require('../Controllers/orderController')
 const upload = require('../configuration/multerConfig');
 
 adminRoutes.use(session({
@@ -49,5 +50,10 @@ adminRoutes.post('/updateproduct/:id',prductController.updateProduct)
 adminRoutes.get('/deleteProduct',auth.isLogin,prductController.deleteproduct)
 adminRoutes.get("/deleteimg/:imageid/:productid", auth.isLogin, prductController.deleteimage);
 adminRoutes.post('/updateimage/:id', upload.upload.array('image', 10), prductController.updateImage);
+
+
+//----------------- PRODUCT ROUTES ----------------------//
+adminRoutes.get("/adminOrderShow",auth.isLogin,orderController.adminOrderShowProfile)
+
 
 module.exports = adminRoutes

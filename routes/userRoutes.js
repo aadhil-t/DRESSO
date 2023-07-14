@@ -8,6 +8,7 @@ const checkoutController = require("../Controllers/checkoutController")
 const addressController = require('../Controllers/addressController')
 const orderController = require('../Controllers/orderController')
 const auth = require('../middleware/userAuth');
+const { isLogin } = require('../middleware/adminAuth');
 
 
 userRoutes.use(express.json());
@@ -58,6 +59,9 @@ userRoutes.get('/checkoutPage',auth.isLogin,checkoutController.loadCheckout)
 // ---------------- ORDER ROUTES --------------------//
 userRoutes.post('/checkoutPage',auth.isLogin,orderController.placeOrder)
 userRoutes.get('/orderSuccess/:id',auth.isLogin,orderController.orderSuccessPage)
+
+userRoutes.get('/orderProfileShow',auth.isLogin,orderController.orderShowProfile)
+userRoutes.get('/singleOrderShow/:id',auth.isLogin,orderController.singleOrderProfileShow)
 
 
 // ---------------- ADDRESS ROUTES --------------------//

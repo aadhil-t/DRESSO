@@ -68,8 +68,65 @@ const orderSuccessPage = async(req,res)=>{
     }
 }
 
+
+const orderShowProfile = async(req,res)=>{
+    try {
+        const session = req.session.user_id
+        const id = req.session.user_id;
+        const userData = await User.findById({_id:id})
+        await User.deleteMany({status:"pending"});
+        const orders = await Order.find({userId:id}).populate('products.productid')
+
+        if(orders){
+            res.render('orderProfileShow',{user: userData,session,orders:orders});
+        }
+        else{
+            res.render('orderProfileShow',{userData:userData,session,orders:[]})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const singleOrderProfileShow = async(req,res)=>{
+    try {
+        const id = req.params.id
+        const session = req.session.user_id;
+        const userData = await User.findOne({_id:session})
+        const orders = await Order.findOne({_id:id}).populate("products.productid");
+        res.render('singleOrderProfile',{session,user:userData,orders:orders})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+const adminOrderShowProfile = async(req,res)=>{
+    try {
+        const session = req.session.auser_id
+        const id = req.session.user_id
+        const adminData = await User.findOne({is_admin:1})
+        await Order.deleteMany({status:"pending"});
+        const orders = await Order.find().populate('products.productid')
+
+        if(orders){
+            res.render('orderShow',{admin:adminData,orders:orders,session});
+        }
+        else{
+            res.render('orderShow',{orders:[],admin:adminData,session})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
     placeOrder,
     orderSuccessPage,
+    orderShowProfile,
+    singleOrderProfileShow,
+    adminOrderShowProfile,
 }
 
