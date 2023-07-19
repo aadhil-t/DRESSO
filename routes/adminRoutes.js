@@ -52,8 +52,8 @@ adminRoutes.get("/deleteimg/:imageid/:productid", auth.isLogin, prductController
 adminRoutes.post('/updateimage/:id', upload.upload.array('image', 10), prductController.updateImage);
 
 
-//----------------- PRODUCT ROUTES ----------------------//
+//----------------- ORDER ROUTES ----------------------//
 adminRoutes.get("/adminOrderShow",auth.isLogin,orderController.adminOrderShowProfile)
-
+adminRoutes.get('/singleorder/:id',auth.isLogin,orderController.adminSingleOrderShow)
 
 module.exports = adminRoutes

@@ -2,9 +2,16 @@ const User = require('../models/userModel');
 const Product = require('../models/productModel')
 const Cart = require('../models/cart-Model')
 const Order = require('../models/orderModel');
+const razorpay  = require("razorpay")
+const crypto = require("crypto")
+
+var instance = new razorpay({
+    key_id:process.env.keyId,
+    key_secret:process.env.keySecret,
+  })
 
 
-
+    //---------- PLACE ORDER ------------//
 const placeOrder = async(req,res)=>{
     try {
         console.log("kkdk");
@@ -40,11 +47,27 @@ const placeOrder = async(req,res)=>{
                 await Cart.deleteOne({userId:req.session.user_id});
                 for(let i=0; i< products.length; i++){
                     const pro = products[i].productid;
-                    const count = products[i].countl;
+                    const count = products[i].count;
                     await Product.findOneAndUpdate({ _id:pro},{$inc: {quantity: -count}});
                 }
                 res.json({ codsuccess: true, orderid})
+            }else{
+                  //------ RAZORPAY ---------
+
+                const orderId  = orderData._id;
+                const totalAmount = orderData.totalAmount
+                var options = {
+                    amount:totalAmount * 100,
+                    currency: "INR",
+                    receipt:"" + orderId
+                };
+
+                instance.orders.create(options, function(err,order){
+                    res.json({ order });
+                })
             }
+        }else{
+            res.redirect("/")
         }
     } catch (error) {
         console.log(error.message);
@@ -52,6 +75,37 @@ const placeOrder = async(req,res)=>{
 }
 
 
+
+const verifyPayment = async(req,res)=>{
+    try {
+        const cartData = await Cart.findOne({userId: req.session.user_id})
+        const products = cartData.products
+        const details = req.body
+        const hmac = crypto.createHmac('sha256', process.env.keySecret);
+        hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id);
+        const hmacValue = hmac.digest('hex');
+  
+        if(hmacValue === details.payment.razorpay_signature){
+            for (let i = 0; i < products.length; i++) {
+              const pro = products[i].productid;
+              const count = products[i].count;
+              await Product.findByIdAndUpdate({ _id: pro }, { $inc: { quantity: -count } });
+            }
+            await Order.findByIdAndUpdate({_id:details.order.receipt},{$set:{status:"placed"}});
+            await Order.findByIdAndUpdate({_id:details.order.receipt},{$set:{paymentId:details.payment.razorpay_payment_id}});
+            await Cart.deleteOne({userId:req.session.user_id});
+            const orderid = details.order.receipt 
+            res.json({ codsuccess: true ,orderid});
+        }else{
+            await Order.findByIdAndRemove({_id:details.order.receipt});
+            res.json({success:false});
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+    //---------- SHOW ORDER SUCCESS PAGE ------------//
 const orderSuccessPage = async(req,res)=>{
     try {
         const session = req.session.user_id
@@ -69,6 +123,7 @@ const orderSuccessPage = async(req,res)=>{
 }
 
 
+    //---------- SHOW ORDER ON USERPROFILE ------------//
 const orderShowProfile = async(req,res)=>{
     try {
         const session = req.session.user_id
@@ -89,6 +144,7 @@ const orderShowProfile = async(req,res)=>{
 }
 
 
+    //---------- SHOW SINGLE ORDER ON USERPROFILE ------------//
 const singleOrderProfileShow = async(req,res)=>{
     try {
         const id = req.params.id
@@ -101,8 +157,10 @@ const singleOrderProfileShow = async(req,res)=>{
     }
 }
 
+              //---------- ADMIN SIDE ------------//
 
 
+ //---------- SHOW ORDER ON ADMINPAGE ------------//
 const adminOrderShowProfile = async(req,res)=>{
     try {
         const session = req.session.auser_id
@@ -122,11 +180,75 @@ const adminOrderShowProfile = async(req,res)=>{
     }
 }
 
+
+ //---------- SHOW  SINGLE ORDER ON ADMINPAGE ------------//
+const adminSingleOrderShow = async(req,res)=>{
+    try {
+        const session = req.session.auser_id;
+        const id = req.params.id
+            console.log(id);
+        const adminData = await User.findOne({is_admin:1});
+        const orderData = await Order.findOne({_id:id}).populate("products.productid");
+        res.render('singleOrderShow',{admin:adminData,orders:orderData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+ 
+const cancelOrder = async(req,res)=>{
+    try {
+        const id = req.body.orderid
+         const reason = req.body.reason
+        const ordersId =req.body
+        const session = req.session.user_id
+        const userData = await Order.findById(session)
+        const orderData = await Order.findOne({userId:session,"product_id": id})
+        const product = orderData.products.find((product)=> product._id.toString()=== id);
+        const canceledAmount = product.totalPrice
+        const productCount = product.count;
+        const proId = product.productid; 
+        const updatedOrder = await Order.findOneAndUpdate(
+            {
+                userId: id,
+                'products._id': id
+            },
+            {
+                $set: {
+                    'products.$.status':"canceled",
+                    'products.$.cancelReason': reason
+                }
+            },
+            { new: true}
+        ); 
+
+        if(updatedOrder){
+            await Product.findByIdAndUpdate({_id: proId}, {$inc: {productStock:productCount}})
+            if(orderData.paymentMethod === 'onlinePayment' || orderData.paymentMethod === 'wallet'){
+                await User.findByIdAndUpdate({_id:session},{$inc: {totalAmount:-canceledAmount}})
+                await Order.findByIdAndUpdate({_id:session},{$inc:{totalAmount:-canceledAmount}});
+
+                res.redirect('/vieworder/' + ordersId)
+            }else{
+                res.redirect('/vieworder/' + ordersId)
+            }
+        }else{
+               res.redirect('/vieworder/' + ordersId)
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
 module.exports = {
     placeOrder,
     orderSuccessPage,
     orderShowProfile,
     singleOrderProfileShow,
     adminOrderShowProfile,
+    adminSingleOrderShow,
+    cancelOrder,
+    verifyPayment,
 }
 

@@ -46,13 +46,13 @@
                               <figure class="product-media">
                                   <a >
                                       
-                                  <img src="/adminAssets/adminImages/<%= order.productId.image[0]%>" alt="Product image">
+                                  <img src="/adminAssets/adminImage/<%= order.productid.productImage[0]%>" alt="Product image">
                                      
                                   </a>
                               </figure>
                               </div>
                             </td>
-                      <td><%= order.productId.productName%></td>
+                      <td><%= order.productid.productName%></td>
                      
                       <td><%= order.productPrice%></td>
                       
@@ -70,10 +70,10 @@
                      <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuOutlineButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> ACTIONS </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton2">
-                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userId %>')" href="#">placed</a>
-                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userId %>')" href="#">shiped</a>
-                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userId %>')" href="#">out for delivery</a>
-                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userId %>')" href="#">Delivered</a>  
+                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userid %>')" href="#">placed</a>
+                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userid %>')" href="#">shiped</a>
+                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userid %>')" href="#">out for delivery</a>
+                          <a class="dropdown-item" onclick="updateStatus(this,'<%= order._id %>','<%= orders.userid %>')" href="#">Delivered</a>  
                         </div>
                       </div>
                       <%}%>
@@ -145,7 +145,27 @@
       </div>
     </div>
   </div>
-  
+
+      // AJAX FOR STATUS UPDATION
+  <script>
+    
+    function updateStatus(status,_id,userid){
+
+    $.ajax({
+      url:'/admin/updateStatus',
+      method:'post',
+      data:{
+        status:status.innerText,
+        id:id,
+        userid:userid
+      },
+      success: (Response)=>{
+        location.reload();
+      }
+    });
+  }
+
+    </script>
 
 
 <%- include("../adminLayouts/adminFooter.ejs")  %>
