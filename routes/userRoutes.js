@@ -62,7 +62,8 @@ userRoutes.get('/orderSuccess/:id',auth.isLogin,orderController.orderSuccessPage
 
 userRoutes.get('/orderProfileShow',auth.isLogin,orderController.orderShowProfile)
 userRoutes.get('/singleOrderShow/:id',auth.isLogin,orderController.singleOrderProfileShow)
-userRoutes.get('/cancelOrder',auth.isLogin,orderController.cancelOrder)
+userRoutes.post('/returnOrder',orderController.returnOrder);
+userRoutes.post('/cancelOrder',orderController.cancelOrder)
 userRoutes.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
 
 

@@ -34,6 +34,9 @@ adminRoutes.get('/dashboard',auth.isLogin,adminController.loadDashboard)
 adminRoutes.get('/logout',adminController.adminLogout)
 adminRoutes.get('/block',auth.isLogin,adminController.block)
 adminRoutes.get('/unblock',auth.isLogin,adminController.unblock)
+adminRoutes.get('/saleReportPage',auth.isLogin,adminController.loadSalesReport)
+adminRoutes.get('/saleSortPage/:id',auth.isLogin,adminController.saleSort)
+
 
 //----------------- CATEGORY ROUTES ----------------------//
 adminRoutes.get('/categoryList',auth.isLogin,categorycontroller.loadCategory)
@@ -55,5 +58,7 @@ adminRoutes.post('/updateimage/:id', upload.upload.array('image', 10), prductCon
 //----------------- ORDER ROUTES ----------------------//
 adminRoutes.get("/adminOrderShow",auth.isLogin,orderController.adminOrderShowProfile)
 adminRoutes.get('/singleorder/:id',auth.isLogin,orderController.adminSingleOrderShow)
+adminRoutes.post("/updateStatus",orderController.changeStatus)
+
 
 module.exports = adminRoutes

@@ -1,4 +1,6 @@
 const User = require('../models/userModel')
+const Order = require('../models/orderModel')
+const Product = require("../models/productModel")
 const bcrypt = require('bcrypt')
 
 
@@ -75,13 +77,90 @@ const loaduserlist = async(req,res)=>{
 }
 
 //---------  LOADING DASHBOARD ---------//
-const loadDashboard = async(req,res)=>{
+const loadDashboard = async (req, res) => {
     try {
-        res.render('dashboard')
+      const adminData = await User.findById({ _id: req.session.auser_id });
+      const userData = await User.find({ is_admin: 0 });
+  
+      const aggregationPipeline = [
+        // Total Sales Amount
+        {
+          $facet: {
+            totalSales: [
+              { $unwind: "$products" },
+              { $match: { "products.status": "Delivered" } },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$products.totalPrice" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  total: 1,
+                },
+              },
+            ],
+            CODTotal: [
+              // Total COD
+              { $unwind: "$products" },
+              { $match: { "products.status": "Delivered", paymentMethod: "COD" } },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$products.totalPrice" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  total: 1,
+                },
+              },
+            ],
+            onlinePaymentTotal: [
+              // Total Online Payment
+              { $unwind: "$products" },
+              { $match: { "products.status": "Delivered", paymentMethod: { $ne: "COD" } } },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$products.totalPrice" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  total: 1,
+                },
+              },
+            ],
+          },
+        },
+      ];
+  
+      const [results] = await Order.aggregate(aggregationPipeline);
+  
+      const total = results.totalSales[0]?.total || 0;
+      const codTotal = results.CODTotal[0]?.total || 0;
+      const onlineTotal = results.onlinePaymentTotal[0]?.total || 0;  
+      const totalOrders = await Order.find();
+      const totalProducts = await Product.find();
+  
+      res.render("dashBoard", {
+        admin: adminData,
+        users: userData,
+        total,
+        totalOrders,
+        totalProducts,
+        codTotal,
+        onlineTotal,
+      });
     } catch (error) {
-        console.log(error.message);
+      console.log(error.message);
     }
-}
+  };
 
 
 //--------- BLOCKING USER  ---------//
@@ -108,6 +187,77 @@ const unblock = async(req,res)=>{
 }
 
 
+//---------  SALES REPORT  ---------//
+const loadSalesReport = async(req,res) =>{
+    try {
+      const adminData = await User.findById({ _id: req.session.auser_id });
+     const order = await Order.aggregate([
+    { $unwind: "$products" },
+    { $match: { 'products.status': 'Delivered' } },
+    { $sort: { date: -1 } },
+    {
+      $lookup: {
+        from: 'products',
+        let: { productid: { $toObjectId: '$products.productid' } },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$_id', '$$productid'] } } }
+        ],
+        as: 'products.productDetails'
+      }
+    },  
+    {
+      $addFields: {
+        'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+      }
+    }
+  ]);
+      res.render("salesReport", { order ,admin:adminData });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+
+
+//---------  SALES SORT  ---------//
+const saleSort = async(req,res)=>{
+    try {
+        const adminData = await User.findById({_id: req.session.auser_id});
+        const id = parseInt(req.params.id);
+        const from = new Date();
+        const to = new Date(from.getTime()- id * 24 * 60 * 60 * 1000);
+        console.log(id);
+        const order = await Order.aggregate([
+            { $unwind: "$products" },
+            {$match: {
+                'products.status': 'Delivered',
+                $and: [
+                  { 'products.deliveryDate': { $gt: to } },
+                  { 'products.deliveryDate': { $lt: from } }
+                ]
+              }},
+            { $sort: { date: -1 } },
+            {
+              $lookup: {
+                from: 'products',
+                let: { productid: { $toObjectId: '$products.productid' } },
+                pipeline: [
+                  { $match: { $expr: { $eq: ['$_id', '$$productid'] } } }
+                ],
+                as: 'products.productDetails'
+              }
+            },  
+            {
+              $addFields: {
+                'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+              }
+            }
+          ]);
+        res.render('salesReport', {order, adminData  })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 module.exports ={
@@ -119,4 +269,6 @@ module.exports ={
     loadDashboard,
     block,
     unblock,
+    loadSalesReport,
+    saleSort,
 }

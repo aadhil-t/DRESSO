@@ -157,6 +157,97 @@ const singleOrderProfileShow = async(req,res)=>{
     }
 }
 
+
+
+ //---------- CANCEL ORDER IN USERSIDE ------------//
+ const cancelOrder = async(req,res)=>{
+    try {
+        const id = req.body.orderid
+        console.log(id);
+         const reason = req.body.reason
+        const ordersId =req.body.ordersid
+        const session = req.session.user_id
+        const userData = await User.findById(session)
+        const orderData = await Order.findOne({userId:session,"products._id": id})
+        console.log(reason);
+        const product = orderData.products.find((product)=> product._id.toString()=== id);
+        
+        const canceledAmount = product.totalPrice
+        const productCount = product.count;
+        const proId = product.productid; 
+        const updatedOrder = await Order.findOneAndUpdate(
+            {
+                userId: session,
+                'products._id': id
+            },
+            {
+                $set: {
+                    'products.$.status':"canceled",
+                    'products.$.cancelReason': reason
+                }
+            },
+            { new: true}
+        ); 
+
+        if(updatedOrder){
+            await Product.findByIdAndUpdate({_id: proId}, {$inc: {productStock:productCount}})
+            if(orderData.paymentMethod === 'onlinPayment' || orderData.paymentMethod === 'wallet'){
+                await User.findByIdAndUpdate({_id:session},{$inc: {wallet:canceledAmount}})
+                await Order.findByIdAndUpdate({_id:session},{$inc:{totalAmount:-canceledAmount}});
+
+                res.redirect('/singleOrderShow/' + ordersId)
+            }else{
+                res.redirect('/singleOrderShow/' + ordersId)
+            }
+        }else{
+               res.redirect('/singleOrderShow/' + ordersId)
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+ //---------- STATUS CHANGE ------------//
+ const changeStatus = async(req,res) =>{
+    try {
+      const id = req.body.id
+      const userId = req.body.userid
+      const statusChange = req.body.status
+      const updatedOrder = await Order.findOneAndUpdate(
+        {
+          userId: userId,
+          'products._id': id
+        },
+        {
+          $set: {
+            'products.$.status': statusChange
+          }
+        },
+        { new: true }
+      );
+      if(statusChange == "Delivered"){
+        const updatedOrder = await Order.findOneAndUpdate(
+          {
+            userId: userId,
+            'products._id': id
+          },
+          {
+            $set: {
+              'products.$.deliveryDate': new Date()
+            }
+          },
+          { new: true }
+        );
+      }
+      if(updatedOrder){
+        res.json({success:true})
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
               //---------- ADMIN SIDE ------------//
 
 
@@ -195,51 +286,51 @@ const adminSingleOrderShow = async(req,res)=>{
     }
 }
 
- 
-const cancelOrder = async(req,res)=>{
+
+ //---------- RETURN ORDER ------------//
+const returnOrder = async(req,res,next) =>{
     try {
-        const id = req.body.orderid
-         const reason = req.body.reason
-        const ordersId =req.body
-        const session = req.session.user_id
-        const userData = await Order.findById(session)
-        const orderData = await Order.findOne({userId:session,"product_id": id})
-        const product = orderData.products.find((product)=> product._id.toString()=== id);
-        const canceledAmount = product.totalPrice
-        const productCount = product.count;
-        const proId = product.productid; 
-        const updatedOrder = await Order.findOneAndUpdate(
-            {
-                userId: id,
-                'products._id': id
-            },
-            {
-                $set: {
-                    'products.$.status':"canceled",
-                    'products.$.cancelReason': reason
-                }
-            },
-            { new: true}
-        ); 
-
-        if(updatedOrder){
-            await Product.findByIdAndUpdate({_id: proId}, {$inc: {productStock:productCount}})
-            if(orderData.paymentMethod === 'onlinePayment' || orderData.paymentMethod === 'wallet'){
-                await User.findByIdAndUpdate({_id:session},{$inc: {totalAmount:-canceledAmount}})
-                await Order.findByIdAndUpdate({_id:session},{$inc:{totalAmount:-canceledAmount}});
-
-                res.redirect('/vieworder/' + ordersId)
-            }else{
-                res.redirect('/vieworder/' + ordersId)
-            }
-        }else{
-               res.redirect('/vieworder/' + ordersId)
-        }
+      const ordersId = req.body.ordersid;
+      const session = req.session.user_id
+      const id = req.body.orderid;
+      const reason = req.body.reason
+      const userData = await Order.findById(session)
+      const orderData = await Order.findOne({ userId: session, 'products._id': id})
+      const product = orderData.products.find((Product) => Product._id.toString() === id);
+      const returnAmount = product.totalPrice
+      const proCount = product.count
+      const proId = product.productid 
+      
+      const updatedOrder = await Order.findOneAndUpdate(
+        {
+          userId: session,
+          'products._id': id
+        },
+        {
+          $set: {
+            'products.$.status': 'Product Returned',
+            'products.$.returnReason': reason
+          }
+        },
+        { new: true }
+      );
+  
+      if(updatedOrder){
+  
+        await Product.findByIdAndUpdate({_id:proId},{$inc:{StockQuantity:proCount}})
+        await User.findByIdAndUpdate({_id:session},{$inc:{wallet:returnAmount}})
+        res.redirect("/singleOrderShow/" + ordersId)
+      }else{
+         res.redirect("/singleOrderShow/" + ordersId)
+      }
+     
+  
     } catch (error) {
-        console.log(error.message);
+      next(error);
     }
-}
-
+  }
+  
+ 
 
 module.exports = {
     placeOrder,
@@ -250,5 +341,7 @@ module.exports = {
     adminSingleOrderShow,
     cancelOrder,
     verifyPayment,
+    changeStatus,
+    returnOrder,
 }
 
