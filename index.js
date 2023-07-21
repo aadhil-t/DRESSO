@@ -15,6 +15,7 @@ const path = require('path')
 const express = require('express');
 const app  = express();
 const nocache = require('nocache')
+const errorHandler = require('./middleware/errorHandller')
 const publicpath = path.join(__dirname,"public")
 app.use(express.static(publicpath))
 const config = require('./configuration/configuration.js')
@@ -33,7 +34,7 @@ app.use('/',userRoutes);
 
 // app.use(morgan('tiny'));
 
-
+app.use(errorHandler)
 //---------- Admin route -----------//
 const adminRoutes = require('./routes/adminRoutes')
 app.use('/admin',adminRoutes);

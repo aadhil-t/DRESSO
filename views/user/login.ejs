@@ -1,7 +1,5 @@
 
 <%- include('../userLayouts/userHeader.ejs')  %>
-<%- include('../userLayouts/userLoginNavbar.ejs') %>
-
 <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('/userAssets/images/backgrounds/login-bg.jpg')">
   <div class="container">
     <div class="form-box">
@@ -27,17 +25,32 @@
 
             <div class="form-footer"> 
             <button type="submit" class="btn btn-outline-primary-2">
-                    <span>LOGIN UP</span>
+                    <span>LOGIN </span>
                   <i class="icon-long-arrow-right"></i>
                   </button>
 
-
+                </form>
                 <div class="text">
                   <br>
                   <h6>if you don't have an account? <a href="/registration">Register</a></h6>
                 </div>
-             
-              </a>
+                </a>
+                <a href="/forgotPassword" class="forgot-link">Forgot Your Password?</a>
+              </div><!-- End .form-footer -->
+              <% 
+
+              if(typeof message !== 'undefined' ){
+                
+                %>
+                  <div class="alert alert-danger" role="alert">
+                    <%= message %>
+                  </div>
+      
+                <% 
+      
+              }
+            %>
+
             </div><!-- End .col-6 -->
           </div><!-- End .row -->
         </div><!-- End .form-choice -->
@@ -48,3 +61,5 @@
   </div><!-- End .container -->
 </div><!-- End .login-page section-bg -->
 </main><!-- End .main -->
+
+<%- include("../userLayouts/userFooter.ejs") %>

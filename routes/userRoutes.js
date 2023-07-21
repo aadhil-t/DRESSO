@@ -8,6 +8,8 @@ const checkoutController = require("../Controllers/checkoutController")
 const addressController = require('../Controllers/addressController')
 const orderController = require('../Controllers/orderController')
 const auth = require('../middleware/userAuth');
+const errorHandler = require('../middleware/errorHandller')
+
 const { isLogin } = require('../middleware/adminAuth');
 
 
@@ -33,6 +35,10 @@ userRoutes.get('/userProfile',auth.isLogin,userController.userProfile)
 
 userRoutes.get('/verification',userController.verificationLoad)
 userRoutes.post('/verifyEmail',userController.verifyEmail)
+userRoutes.get("/forgotPassword", userController.forgotPassword);
+userRoutes.post('/forgotPassword',userController.forgotVerifyMail)
+userRoutes.post('/verifyForgot',userController.verifyForgotMail)
+userRoutes.post('/resubmitPassword',userController.resubmitPassword)
  
 
 // ---------------- SHOP ROUTES --------------------//
@@ -81,6 +87,6 @@ userRoutes.get('/editProfileaddress',auth.isLogin,addressController.editProfileA
 userRoutes.post('/editProfileaddress',auth.isLogin,addressController.updatedprofileAddress)
 
 
-
+userRoutes.use(errorHandler)
 module.exports = userRoutes;
 

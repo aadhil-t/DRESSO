@@ -5,6 +5,7 @@ const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const session = require('express-session')
 const wishlist = require('../models/wishlistModel')
+
 // const config = require()
 let email
 let otp
@@ -46,6 +47,7 @@ const userLogout = async(req,res)=>{
 //--------- VERIFY LOGIN ---------//
 const verifylogin = async(req,res)=>{
     try {
+        console.log("kkk");
         const emailUser = req.body.Email
         const password = req.body.Password
         const userData = await User.findOne({email:emailUser}) 
@@ -156,7 +158,7 @@ const insertuser = async(req,res)=>{
             );
             console.log(userData);
             if (userData) {
-             req.session.user_id =userData._id
+             req.session.user_id =userData._id 
               res.redirect("/");
             } else {
               res.render("verification",{ message: "please check the otp again" });
@@ -170,7 +172,100 @@ const insertuser = async(req,res)=>{
       };
       
 
+         //--------- FORGET PASSWORD ---------//
+    const forgotPassword = async (req,res,next) =>{
+        try {
+          res.render("forgotPassword")
+        } catch (error) {
+          next(error);
+        }
+      }
+
       
+          //--------- FORGET VERIFY MAIL ---------//
+let otpv;
+let emailv;
+const forgotVerifyMail = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const userData = await User.findOne({ email: email });
+    const name = userData.name;
+    if (userData) {
+      randomnumber = Math.floor(Math.random() * 9000) + 1000;
+      otpv = randomnumber;
+      emailv = email; 
+      sendverifyMail(name, email, randomnumber);
+      res.render("forgotPassword", { message: "please check your email" });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+    //================== VERIFY OTP ===================
+
+const verifyForgotMail = async (req, res) => {
+    try {
+      const otp = req.body.otp;
+      if (otp == otpv) {
+        res.render("resubmitPassword");
+      } else {
+        res.render("forgotPassword", { message: "otp is incorrect" });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+
+      //================== VERIFY OTP ===================
+      const reSendMail = async(req,res)=>{
+        try {
+          const userData = await User.find({email:email})
+          const name = userData.name
+            const randomnumber= Math.floor(Math.random() * 9000) + 1000;
+          sendverifyMail(name,email,randomnumber)
+          res.redirect('/verify')
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
+
+
+     //======================== RESUBMIT PASSWORD ===================
+
+const resubmitPassword = async (req, res,next) => {
+    try {
+      if (req.body.password != req.body.password2) {
+        res.render("resubmitPassword", {
+          message: "Password Not Matching",
+        });
+        return;
+      }
+      
+      const spassword = await securePassword(req.body.password);
+  
+      const changePassword = await User.findOneAndUpdate(
+        { email: emailv },
+        { $set: { password: spassword } }
+      );
+  
+      if (changePassword) {
+        res.render("resubmitPassword", {
+          message: "Password successfully changed",
+        });
+      } else {
+        res.render("resubmitPassword", {
+          message: "Please try again!!",
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  
   //--------- VERIFICATION LOAD ---------//
    const verificationLoad = async(req,res)=>{
     try {
@@ -183,7 +278,7 @@ const insertuser = async(req,res)=>{
 
 
      //--------- LOAD SHOP ---------//
-   const loadShop = async(req,res)=>{
+   const loadShop = async(req,res,next)=>{
     try {
         const productdata = await Product.find({is_delete:false})
         const categorydata = await Category.find({})
@@ -196,7 +291,7 @@ const insertuser = async(req,res)=>{
             user:userData,
         });
     } catch (error) {
-        console.log(error.message);
+       next(error)
     }
    }
 
@@ -235,6 +330,7 @@ const insertuser = async(req,res)=>{
   }
 
 
+    //--------- VIEW USER PROFILE  ---------//
   const userProfile = async(req,res)=>{
     try {
         const session = req.session.user_id;
@@ -258,4 +354,8 @@ module.exports = {
     loadShop,
     SingleProduct,
     userProfile,
+    forgotPassword,
+    forgotVerifyMail,
+    verifyForgotMail,
+    resubmitPassword,
 }
