@@ -10,6 +10,7 @@ const adminController = require('../Controllers/admincontroller');
 const categorycontroller = require('../Controllers/categorycontroller');
 const prductController = require('../Controllers/productController');
 const orderController = require('../Controllers/orderController')
+const couponontroller = require('../Controllers/couponController')
 const upload = require('../configuration/multerConfig');
 
 adminRoutes.use(session({
@@ -60,5 +61,8 @@ adminRoutes.get("/adminOrderShow",auth.isLogin,orderController.adminOrderShowPro
 adminRoutes.get('/singleorder/:id',auth.isLogin,orderController.adminSingleOrderShow)
 adminRoutes.post("/updateStatus",orderController.changeStatus)
 
+
+// ---------------- COUPON & OFFER ROUTES --------------------//
+adminRoutes.get('/couponLoad',auth.isLogin,couponontroller.loadCoupon)
 
 module.exports = adminRoutes

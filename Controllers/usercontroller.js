@@ -119,7 +119,8 @@ const insertuser = async(req,res)=>{
             console.log(error.message);
         }
     }
-
+        
+    
 
     //--------- SEND VERIFY MAIL  ---------//
     const sendverifyMail = async(name,email,otp)=>{
@@ -172,6 +173,7 @@ const insertuser = async(req,res)=>{
       };
       
 
+       
          //--------- FORGET PASSWORD ---------//
     const forgotPassword = async (req,res,next) =>{
         try {
@@ -182,6 +184,7 @@ const insertuser = async(req,res)=>{
       }
 
       
+
           //--------- FORGET VERIFY MAIL ---------//
 let otpv;
 let emailv;

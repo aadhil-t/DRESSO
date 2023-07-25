@@ -161,10 +161,32 @@ const addtoCart = async (req, res) => {
     }
   };
 
+
+  const deleteCart = async(req,res)=>{
+    try {
+      const session = req.session.user_id
+      const proId = req.body.product
+      const cartData = await Cart.findOne({userId:session});
+      console.log(session);
+
+      if(cartData){
+        const cartDelete = await Cart.deleteOne({userId:session})
+      }else{
+        const pullCart = await Cart.updateOne(
+          {userId:session},
+          {$pull: {products : {productid: proId}}}
+          );
+      }
+      res.json({success: true});
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
 module.exports ={
     loadCart,
     addtoCart,
     changeProductCount,
-
+    deleteCart,
 
 }

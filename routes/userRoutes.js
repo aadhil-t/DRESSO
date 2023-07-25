@@ -50,6 +50,7 @@ userRoutes.post('/resubmitPassword',userController.resubmitPassword)
 userRoutes.get("/cartPage", auth.isLogin, cartController.loadCart);
 userRoutes.post("/addtocart", auth.isLogin, cartController.addtoCart);
 userRoutes.post('/changeQuantity',auth.isLogin,cartController.changeProductCount);
+userRoutes.post('/deletecart',auth.isLogin,cartController.deleteCart);
 
 
 // ---------------- WISHLIST ROUTES --------------------//
@@ -85,6 +86,7 @@ userRoutes.post('/addProfileAddress',auth.isLogin,addressController.inserprofile
 userRoutes.get('/addProfileAddress',auth.isLogin,addressController.loadprofileAddress)
 userRoutes.get('/editProfileaddress',auth.isLogin,addressController.editProfileAddress)
 userRoutes.post('/editProfileaddress',auth.isLogin,addressController.updatedprofileAddress)
+
 
 
 userRoutes.use(errorHandler)

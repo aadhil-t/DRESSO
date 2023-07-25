@@ -3,7 +3,8 @@ const Product = require('../models/productModel')
 const Cart = require('../models/cart-Model')
 const Order = require('../models/orderModel');
 const razorpay  = require("razorpay")
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { log } = require('console');
 
 var instance = new razorpay({
     key_id:process.env.keyId,
@@ -48,7 +49,7 @@ const placeOrder = async(req,res)=>{
                 for(let i=0; i< products.length; i++){
                     const pro = products[i].productid;
                     const count = products[i].count;
-                    await Product.findOneAndUpdate({ _id:pro},{$inc: {quantity: -count}});
+                    await Product.findOneAndUpdate({ _id:pro},{$inc: {productStock: -count}});
                 }
                 res.json({ codsuccess: true, orderid})
             }else{
@@ -89,7 +90,7 @@ const verifyPayment = async(req,res)=>{
             for (let i = 0; i < products.length; i++) {
               const pro = products[i].productid;
               const count = products[i].count;
-              await Product.findByIdAndUpdate({ _id: pro }, { $inc: { quantity: -count } });
+              await Product.findByIdAndUpdate({ _id: pro }, { $inc: { productStock: -count } });
             }
             await Order.findByIdAndUpdate({_id:details.order.receipt},{$set:{status:"placed"}});
             await Order.findByIdAndUpdate({_id:details.order.receipt},{$set:{paymentId:details.payment.razorpay_payment_id}});
