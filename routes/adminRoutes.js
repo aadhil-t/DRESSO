@@ -64,5 +64,9 @@ adminRoutes.post("/updateStatus",orderController.changeStatus)
 
 // ---------------- COUPON & OFFER ROUTES --------------------//
 adminRoutes.get('/couponLoad',auth.isLogin,couponontroller.loadCoupon)
+adminRoutes.post('/addCoupon',auth.isLogin,couponontroller.addCoupon)
+adminRoutes.post('/deleteCoupon',auth.isLogin,couponontroller.deleteCoupon)
+adminRoutes.post('/editCoupon/:id',auth.isLogin,couponontroller.editCoupon)
+
 
 module.exports = adminRoutes

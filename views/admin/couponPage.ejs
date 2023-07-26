@@ -60,7 +60,7 @@
                 </div>
                 <div class="form-group">
                   <label for="exampleInputConfirmPassword1">Expiry Date</label>
-                  <input type="date" class="form-control" name="expDate">
+                  <input type="date" class="form-control" name="expiryDate">
                 </div>
                
                 <button type="submit" class="btn btn-primary mr-2">Submit</button>
@@ -95,8 +95,8 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <% if(coupons.length > 0){ 
-                                coupons.forEach((coupon) => { %>
+                        <% if(coupon.length > 0){ 
+                                coupon.forEach((coupon) => { %>
                         <tr>
                             
 
@@ -142,7 +142,7 @@
                                         </div>
                                         <div class="form-group">
                                           <label for="exampleInputConfirmPassword1">Expiry Date</label>
-                                          <input type="date" class="form-control" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" name="expDate">
+                                          <input type="date" class="form-control" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" name="expiryDate">
                                         </div>
                                        
                                         <button type="submit" class="btn btn-primary mr-2">Submit</button>

@@ -7,6 +7,8 @@ const wishlistController = require("../Controllers/wishlistController")
 const checkoutController = require("../Controllers/checkoutController")
 const addressController = require('../Controllers/addressController')
 const orderController = require('../Controllers/orderController')
+const couponController = require('../Controllers/couponController')
+
 const auth = require('../middleware/userAuth');
 const errorHandler = require('../middleware/errorHandller')
 
@@ -87,6 +89,7 @@ userRoutes.get('/addProfileAddress',auth.isLogin,addressController.loadprofileAd
 userRoutes.get('/editProfileaddress',auth.isLogin,addressController.editProfileAddress)
 userRoutes.post('/editProfileaddress',auth.isLogin,addressController.updatedprofileAddress)
 
+userRoutes.post('/applyCoupon',couponController.applyCoupon)
 
 
 userRoutes.use(errorHandler)
