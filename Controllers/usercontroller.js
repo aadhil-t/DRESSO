@@ -3,6 +3,7 @@ const nodeMailer = require('nodemailer')
 const bcrypt = require('bcrypt')
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
+const Banner = require('../models/bannerModel')
 const session = require('express-session')
 const wishlist = require('../models/wishlistModel')
 
@@ -17,7 +18,8 @@ const loadhome = async(req,res)=>{
     try{
         const session = req.session.user_id
         const userData = await User.findById(req.session.user_id)
-      res.render('home',{user:userData,session})
+        const banner = await Banner.find()
+      res.render('home',{user:userData,session,banners:banner})
     }
     catch(error){
         console.log(error);
@@ -47,7 +49,6 @@ const userLogout = async(req,res)=>{
 //--------- VERIFY LOGIN ---------//
 const verifylogin = async(req,res)=>{
     try {
-        console.log("kkk");
         const emailUser = req.body.Email
         const password = req.body.Password
         const userData = await User.findOne({email:emailUser}) 

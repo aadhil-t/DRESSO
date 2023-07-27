@@ -83,38 +83,66 @@ const deleteCoupon = async(req,res)=>{
 }
 
             //--------- USER SIDE--------//
-//        // ------------ APPLY COUPON ------------//
+       // ------------ APPLY COUPON ------------//
 const applyCoupon = async(req,res,next)=>{
     try {
-      const code = req.body.code;
+        const code = req.body.code;
      
-      const amount = Number(req.body.amount)
-      const userExist = await couponmodel.findOne({couponCode:code,user:{$in:[req.session.user_id]}})
-      if(userExist){
-        res.json({user:true})
-      }else{
-        const coupondata = await couponmodel.findOne({couponCode:code})
-        if(coupondata){
-            if(coupondata.expiryDate <= new Date()){
-                res.json({date:true})
-            }else{
-                if(amount < coupondata.criteria){
-                    res.json({notEligible:true})
-                }else{
-                await couponmodel.findOneAndUpdate({_id:coupondata._id},{$push:{user:req.session.user_id}}) 
-                const perAmount = Math.round((amount * coupondata.discountPercentage)/100 )
-                const disTotal = Math.round(amount - perAmount)
-                return res.json({amountOkey:true,disAmount:perAmount,disTotal})
-            }
-            }
+        const amount = Number(req.body.amount)
+        const userExist = await Coupon.findOne({couponCode:code,user:{$in:[req.session.user_id]}})
+        if(userExist){
+          return res.json({user:true})
+        }else{
+          const coupondata = await Coupon.findOne({couponCode:code})
+          if(coupondata){
+              if(coupondata.expiryDate <= new Date()){
+                  return res.json({date:true})
+              }else{
+                  if(amount < coupondata.criteria){
+                     return res.json({notEligible:true})
+                  }else{
+                  await Coupon.findOneAndUpdate({_id:coupondata._id},{$push:{user:req.session.user_id}}) 
+                  const perAmount = Math.round((amount * coupondata.discountPercentage)/100 )
+                  const disTotal = Math.round(amount - perAmount)
+                  return res.json({amountOkey:true,disAmount:perAmount,disTotal})
+              }
+              }
+          }
         }
-      }
-      res.json({invalid:true})
+        return res.json({invalid:true})
     } catch (error) {
         next(error);
     }
 }
 
+
+const addOffer = async(req,res)=>{
+    try {
+        const id = req.body.id
+        const offName = req.body.offName
+        console.log(offName);
+        const offPercentage = req.body.offPercentage  
+        console.log(offPercentage);
+        const productdata = await Product.findById(id)
+        const price = productdata.productPrice
+        const offAmount = Math.round(price * offPercentage/100)
+        console.log(offAmount);
+        const offPrice = price - offAmount
+        const offAdd =  await Product.findByIdAndUpdate(id,{$set:{
+            offName: offName,
+            offPercentage: offPercentage,
+            offPrice: offPrice
+        }})
+        if(offAdd){
+            res.redirect('/admin/productList')
+        }else{
+            res.redirect('/admin/productList')
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+ 
 
 module.exports ={
     loadCoupon,
@@ -122,4 +150,5 @@ module.exports ={
     editCoupon,
     deleteCoupon,
     applyCoupon, 
+    addOffer
 }

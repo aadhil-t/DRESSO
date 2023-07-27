@@ -113,11 +113,16 @@
                                                 <div class="product-cat">
                                                     <a href="#">Women</a>
                                                 </div><!-- End .product-cat -->
-                                                <h3 class="product-title">Price:<a href="product.html"> <%= product.productPrice %> </a></h3><!-- End .product-title -->
+
+                                               
                                                 <div class="product-price">
+													<%	if(product.offPrice > 0){ %>
+														<del class="text-danger">₹ <%= product.productPrice %>.00</del> &nbsp; &nbsp; ₹ <%= product.offPrice%>.00
+														<% }else{ %>
+														₹ <%=product.productPrice%>.00
+														<%	} %>
                                                 </div><!-- End .product-price -->
                                         
-
                                                 
                                             </div><!-- End .product-body -->
                                         </div><!-- End .product -->

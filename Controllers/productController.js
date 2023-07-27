@@ -47,6 +47,7 @@ const insertProduct = async(req,res)=>{
         });
 
         const productData = await Product.save();
+
         if(productData){
             res.redirect('/admin/productList')
         }

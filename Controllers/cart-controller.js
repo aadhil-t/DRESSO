@@ -77,6 +77,14 @@ const addtoCart = async (req, res) => {
       }
   
       const cartProduct = cartData.products.find((product)=> product.productid === productId)
+      
+      let newPrice;
+
+         if(productData.offPrice > 0){
+          newPrice = productData.offPrice
+          }else{
+            newPrice = productData.price
+          }
 
       if(cartProduct){
       await Cart.updateOne(
@@ -84,15 +92,15 @@ const addtoCart = async (req, res) => {
         {
           $inc:{
             "products.$.count":1,
-            "products.$.totalPrice":  productData.productPrice
+            "products.$.totalPrice":  newPrice
           }
         }
       );
     }else{
       cartData.products.push({
         productid: productId,
-        productPrice: productData.productPrice,
-        totalPrice: productData.productPrice,
+        productPrice: newPrice,
+        totalPrice: newPrice
       });
       await cartData.save();
     }

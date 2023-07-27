@@ -53,7 +53,11 @@
                                             </h3><!-- End .product-title -->
                                         </div><!-- End .product -->
                                     </td>
-                                    <td> <%= product.productPrice %> </td>
+                                    <td><%	if(product.productid.offPrice > 0){ %>
+                                        <del class="text-danger">₹ <%= product.productid.productPrice %>.00</del> &nbsp; &nbsp; ₹ <%= product.productid.offPrice%>.00
+                                        <% }else{ %>
+                                        ₹ <%=product.productid.productPrice%>.00
+                                        <%	} %> </td>
                                     <td class="quantity-col">
                                       
                                  
@@ -78,11 +82,7 @@
                                     <td class="remove-col"><button class="btn-danger btn-remove" onclick="deletecart('<%= product.productid._id %>')"><i class="icon-close"></i></button></td>
                                 </tr>
                                 <% });%>
-                                <% } else { %>
-                                    <div class="d-flex justify-content-center">
-                                            <h2 class="text-primary" colspan="5"  style="margin-bottom: 500px;">No Products Added To Cart</h2>
-                                        </div>
-                                        <% } %>
+                               
                             </tbody>
                         </table><!-- End .table table-wishlist -->
                     </div><!-- End .col-lg-9 -->
@@ -133,6 +133,11 @@
                         
                         
                         </aside><!-- End .col-lg-3 -->
+                        <% } else { %>
+                                    <div class="d-flex justify-content-center">
+                                            <h2 class="text-primary" colspan="5"  style="margin-bottom: 500px;">No Products Added To Cart</h2>
+                                        </div>
+                                        <% } %>
                         
                 </div><!-- End .row -->
                 

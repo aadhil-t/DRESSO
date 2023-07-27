@@ -88,10 +88,15 @@
                                 <div class="product-details">
                                     <h1 class="product-title"><%= product.productName %></h1><!-- End .product-title -->
 
-                                    <div class="product-price">₹ 
-                                      <%= product.productPrice %>
+                                  
+                                    <div class="product-price">
+                                        <%	if(product.offPrice > 0){ %>
+                                            <del class="text-danger">₹ <%= product.productPrice %>.00</del> &nbsp; &nbsp; ₹ <%= product.offPrice%>.00
+                                            <% }else{ %>
+                                            ₹ <%=product.productPrice%>.00
+                                            <%	} %>
                                     </div><!-- End .product-price -->
-
+                                    
                                     <div class="product-content">
                                         <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p>
                                     </div><!-- End .product-content -->

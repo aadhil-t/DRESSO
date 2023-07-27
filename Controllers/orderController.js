@@ -15,14 +15,11 @@ var instance = new razorpay({
     //---------- PLACE ORDER ------------//
 const placeOrder = async(req,res)=>{
     try {
-        console.log("kkdk");
         const userData = await User.findOne({_id: req.session.user_id});
         const address = req.body.address;
         const cartData = await Cart.findOne({userId:req.session.user_id});
         const products = cartData.products;
-        console.log(address);
         const total = parseInt(req.body.Total)
-        console.log(total);
         const paymentMethod = req.body.payment;
 
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
@@ -53,6 +50,26 @@ const placeOrder = async(req,res)=>{
                 }
                 res.json({ codsuccess: true, orderid})
             }else{
+                //------ WALLET ---------
+                if(order.paymentMethod === 'wallet-payment'){
+                    console.log('is wallet payment');
+                    const wallet = userData.wallet
+                    if(wallet >= total){
+                        await Cart.deleteOne({ userId: req.session.user_id});
+                        for(let i = 0; i<products.length; i++){
+                            const pro = products[i].productid;
+                            const count = products[i].count;
+                            await Product.findByIdAndUpdate({ _id: pro }, { $inc: { quantity: -count } });
+                            await User.findOneAndUpdate({_id:req.session.user_id},{$inc:{wallet: -total}})
+                            await Order.findOneAndUpdate({_id:order._id},{$set:{status:"placed"}});
+                            res.json({ codsuccess: true ,orderid});
+                        }
+                    }else{
+                        console.log('is working still');
+                        res.json({walletFailed:true});
+                      }
+                }else{
+
                   //------ RAZORPAY ---------
 
                 const orderId  = orderData._id;
@@ -67,6 +84,8 @@ const placeOrder = async(req,res)=>{
                     res.json({ order });
                 })
             }
+        }
+       
         }else{
             res.redirect("/")
         }
@@ -130,6 +149,7 @@ const orderShowProfile = async(req,res)=>{
         const session = req.session.user_id
         const id = req.session.user_id;
         const userData = await User.findById({_id:id})
+        await Order.deleteMany({status:'pending'})
         await User.deleteMany({status:"pending"});
         const orders = await Order.find({userId:id}).populate('products.productid')
 

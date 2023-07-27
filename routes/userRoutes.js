@@ -84,10 +84,10 @@ userRoutes.post('/editaddress',auth.isLogin,addressController.updatedAddress)
 userRoutes.post('/deleteaddress',auth.isLogin,addressController.deleteAddress)
 userRoutes.get('/profileAddress',auth.isLogin,addressController.showAddress)
 
-userRoutes.post('/addProfileAddress',auth.isLogin,addressController.inserprofileAddress)
+userRoutes.post('/addProfileAddress',addressController.inserprofileAddress)
 userRoutes.get('/addProfileAddress',auth.isLogin,addressController.loadprofileAddress)
 userRoutes.get('/editProfileaddress',auth.isLogin,addressController.editProfileAddress)
-userRoutes.post('/editProfileaddress',auth.isLogin,addressController.updatedprofileAddress)
+userRoutes.post('/editProfileaddress',addressController.updatedprofileAddress)
 
 userRoutes.post('/applyCoupon',couponController.applyCoupon)
 

@@ -46,7 +46,14 @@
                                         </h3><!-- End .product-title -->
                                     </div><!-- End .product -->
                                 </td>
-                                <td class="price-col"><%= wish.productid.productPrice %></td>
+                                <td class="price-col"><%if(wish.productid.offPrice > 0){ %>
+                                            <del class="text-danger">₹ <%=wish.productid.productPrice %>.00</del> &nbsp; &nbsp; ₹ <%=wish.productid.offPrice%>.00
+                                            <% }else{ %>
+                                            ₹ <%=wish.productid.productPrice%>.00
+                                            <%	} %></td>
+
+                                
+
                                 <td class="stock-col">
                                     <span class="in-stock"><%= wish.productid.productStock %></span>
                                 </td>

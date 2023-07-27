@@ -11,6 +11,7 @@ const categorycontroller = require('../Controllers/categorycontroller');
 const prductController = require('../Controllers/productController');
 const orderController = require('../Controllers/orderController')
 const couponontroller = require('../Controllers/couponController')
+const bannerController = require('../Controllers/bannerController');
 const upload = require('../configuration/multerConfig');
 
 adminRoutes.use(session({
@@ -67,6 +68,13 @@ adminRoutes.get('/couponLoad',auth.isLogin,couponontroller.loadCoupon)
 adminRoutes.post('/addCoupon',auth.isLogin,couponontroller.addCoupon)
 adminRoutes.post('/deleteCoupon',auth.isLogin,couponontroller.deleteCoupon)
 adminRoutes.post('/editCoupon/:id',auth.isLogin,couponontroller.editCoupon)
+adminRoutes.post("/addOffer",auth.isLogin,couponontroller.addOffer)
 
+
+// ---------------- BANNER ROUTES --------------------//
+adminRoutes.get('/bannerLoad',auth.isLogin,bannerController.loadBanner)
+adminRoutes.post("/addbanner",upload.upload.single('image'),bannerController.addBanner)
+adminRoutes.post('/bannerEdit',upload.upload.single('image'),bannerController.editBanner)
+adminRoutes.post("/deleteBanner",bannerController.deleteBanner) 
 
 module.exports = adminRoutes

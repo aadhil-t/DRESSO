@@ -121,7 +121,7 @@
                             <div class="accordion-summary">
                               <div class="d-flex align-items-center">
                                   <div class="mr-2">
-                                      <input required type="radio" id="walletpayment" name="payment" value="walletpayment">
+                                      <input required type="radio" id="walletpayment" name="payment" value="wallet-payment">
                                   </div>
                                   <a href="" class="d-block text-dark" for="pay1">Wallet </a>
                               </div>
@@ -368,56 +368,54 @@ function copyCode(code) {
 // COUPON APPLY
 
 function applycoupon(code){
-		
-      event.preventDefault();
-    const amount = document.getElementById('gt4').innerHTML;
-    $.ajax({
-      url:"/applyCoupon",
-      data:{  
-        code:code,
-        amount:amount
-      },
-      method:"post",
-      success:(response)=>{
-        if(response.user){
-          Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'This coupon already used!'
-              })
-        }else if(response.date){
-          console.log("coupon date expired");
-          Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'date expired!!!'
-              })
-        }else if(response.amountOkey){
-          document.getElementById('discount').innerHTML = response.disAmount
-          document.getElementById('gt4').innerHTML = response.disTotal
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Discount redeemed',
-            showConfirmButton: false,
-            timer: 1500
-          })
-        }else if(response.invalid){
-          Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Invalid Coupon!!!'
-              })
-        }else if(response.notEligible){
-			Swal.fire({
-				icon : 'error',
-				title : 'You Are Not Eligible For This Coupon' 
-			})
-		}
-      }
+    event.preventDefault();
+  const amount = document.getElementById('total').innerHTML;
+  $.ajax({
+    url:"/applyCoupon",
+    data:{  
+      code:code,
+      amount:amount
+    },
+    method:"post",
+    success:(response)=>{
+      if(response.user){
+        Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'This coupon already used!'
+            })
+      }else if(response.date){
+        console.log("coupon date expired");
+        Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'date expired!!!'
+            })
+      }else if(response.amountOkey){
+        document.getElementById('discount').innerHTML = response.disAmount
+        document.getElementById('total').innerHTML = response.disTotal
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Discount redeemed',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      }else if(response.invalid){
+        Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Invalid Coupon!!!'
+            })
+      }else if(response.notEligible){
+    Swal.fire({
+      icon : 'error',
+      title : 'You Are Not Eligible For This Coupon' 
     })
   }
-   
+    }
+  })
+}
     </script>
 
 <%- include("../userLayouts/userFooter.ejs")  %>
