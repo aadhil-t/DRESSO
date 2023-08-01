@@ -38,6 +38,7 @@ adminRoutes.get('/block',auth.isLogin,adminController.block)
 adminRoutes.get('/unblock',auth.isLogin,adminController.unblock)
 adminRoutes.get('/saleReportPage',auth.isLogin,adminController.loadSalesReport)
 adminRoutes.get('/saleSortPage/:id',auth.isLogin,adminController.saleSort)
+adminRoutes.post('/range-sort',adminController.rangeSort);
 
 
 //----------------- CATEGORY ROUTES ----------------------//
@@ -65,10 +66,10 @@ adminRoutes.post("/updateStatus",orderController.changeStatus)
 
 // ---------------- COUPON & OFFER ROUTES --------------------//
 adminRoutes.get('/couponLoad',auth.isLogin,couponontroller.loadCoupon)
-adminRoutes.post('/addCoupon',auth.isLogin,couponontroller.addCoupon)
-adminRoutes.post('/deleteCoupon',auth.isLogin,couponontroller.deleteCoupon)
-adminRoutes.post('/editCoupon/:id',auth.isLogin,couponontroller.editCoupon)
-adminRoutes.post("/addOffer",auth.isLogin,couponontroller.addOffer)
+adminRoutes.post('/addCoupon',couponontroller.addCoupon)
+adminRoutes.post('/deleteCoupon',couponontroller.deleteCoupon)
+adminRoutes.post('/editCoupon/:id',couponontroller.editCoupon)
+adminRoutes.post("/addOffer",couponontroller.addOffer)
 
 
 // ---------------- BANNER ROUTES --------------------//

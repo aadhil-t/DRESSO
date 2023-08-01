@@ -46,13 +46,15 @@ userRoutes.post('/resubmitPassword',userController.resubmitPassword)
 // ---------------- SHOP ROUTES --------------------//
  userRoutes.get('/shoppage',userController.loadShop)
  userRoutes.get('/singleproduct/:id',userController.SingleProduct)
+ userRoutes.get("/filterCategory/:id",userController.filterCategory)
+
 
 
 // ---------------- CART ROUTES --------------------//
 userRoutes.get("/cartPage", auth.isLogin, cartController.loadCart);
-userRoutes.post("/addtocart", auth.isLogin, cartController.addtoCart);
-userRoutes.post('/changeQuantity',auth.isLogin,cartController.changeProductCount);
-userRoutes.post('/deletecart',auth.isLogin,cartController.deleteCart);
+userRoutes.post("/addtocart",cartController.addtoCart);
+userRoutes.post('/changeQuantity',cartController.changeProductCount);
+userRoutes.post('/deletecart',cartController.deleteCart);
 
 
 // ---------------- WISHLIST ROUTES --------------------//
@@ -66,22 +68,22 @@ userRoutes.get('/checkoutPage',auth.isLogin,checkoutController.loadCheckout)
 
 
 // ---------------- ORDER ROUTES --------------------//
-userRoutes.post('/checkoutPage',auth.isLogin,orderController.placeOrder)
+userRoutes.post('/checkoutPage',orderController.placeOrder)
 userRoutes.get('/orderSuccess/:id',auth.isLogin,orderController.orderSuccessPage)
 
 userRoutes.get('/orderProfileShow',auth.isLogin,orderController.orderShowProfile)
 userRoutes.get('/singleOrderShow/:id',auth.isLogin,orderController.singleOrderProfileShow)
 userRoutes.post('/returnOrder',orderController.returnOrder);
 userRoutes.post('/cancelOrder',orderController.cancelOrder)
-userRoutes.post('/verify-payment',auth.isLogin,orderController.verifyPayment)
+userRoutes.post('/verify-payment',orderController.verifyPayment)
 
 
 // ---------------- ADDRESS ROUTES --------------------//
 userRoutes.get('/addAddress',auth.isLogin,addressController.loadUserAddress)
-userRoutes.post('/addAddress',auth.isLogin,addressController.inserUserAddress)
+userRoutes.post('/addAddress',addressController.inserUserAddress)
 userRoutes.get('/editaddress',auth.isLogin,addressController.editUserAddress)
-userRoutes.post('/editaddress',auth.isLogin,addressController.updatedAddress)
-userRoutes.post('/deleteaddress',auth.isLogin,addressController.deleteAddress)
+userRoutes.post('/editaddress',addressController.updatedAddress)
+userRoutes.post('/deleteaddress',addressController.deleteAddress)
 userRoutes.get('/profileAddress',auth.isLogin,addressController.showAddress)
 
 userRoutes.post('/addProfileAddress',addressController.inserprofileAddress)

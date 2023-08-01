@@ -11,7 +11,6 @@ var instance = new razorpay({
     key_secret:process.env.keySecret,
   })
 
-
     //---------- PLACE ORDER ------------//
 const placeOrder = async(req,res)=>{
     try {
@@ -41,7 +40,7 @@ const placeOrder = async(req,res)=>{
 
         if(orderData){
             // CASH ON DELIVERY
-            if(order.status === 'placed'){
+            if (order.status === 'placed'){
                 await Cart.deleteOne({userId:req.session.user_id});
                 for(let i=0; i< products.length; i++){
                     const pro = products[i].productid;
@@ -54,7 +53,7 @@ const placeOrder = async(req,res)=>{
                 if(order.paymentMethod === 'wallet-payment'){
                     console.log('is wallet payment');
                     const wallet = userData.wallet
-                    if(wallet >= total){
+                    if (wallet >= total){
                         await Cart.deleteOne({ userId: req.session.user_id});
                         for(let i = 0; i<products.length; i++){
                             const pro = products[i].productid;
@@ -151,7 +150,7 @@ const orderShowProfile = async(req,res)=>{
         const userData = await User.findById({_id:id})
         await Order.deleteMany({status:'pending'})
         await User.deleteMany({status:"pending"});
-        const orders = await Order.find({userId:id}).populate('products.productid')
+        const orders = await Order.find({userId:id}).populate('products.productid').sort({date:-1})
 
         if(orders){
             res.render('orderProfileShow',{user: userData,session,orders:orders});
@@ -279,7 +278,7 @@ const adminOrderShowProfile = async(req,res)=>{
         const id = req.session.user_id
         const adminData = await User.findOne({is_admin:1})
         await Order.deleteMany({status:"pending"});
-        const orders = await Order.find().populate('products.productid')
+        const orders = await Order.find().populate('products.productid').sort({date:-1})
 
         if(orders){
             res.render('orderShow',{admin:adminData,orders:orders,session});

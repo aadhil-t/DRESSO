@@ -29,7 +29,8 @@
                 <tr>
                   <th>No</th>
                   <th>Image</th>
-                  <th>Product</th>
+                  <th>Product Name</th>   
+                  <th>Quantity</th>   
                   <th>price</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -53,12 +54,13 @@
                               </div>
                             </td>
                       <td><%= order.productid.productName%></td>
+                      <td><%= order.count %></td>
                      
                       <td><%= order.productPrice%></td>
                       
                       <td><%= order.status%></td>
                       <td>
-                      <%  if(order.status == 'cancelled' ){%>
+                      <%  if(order.status == 'canceled' ){%>
                         <a type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelReasonmodal-<%= order._id %>" > view Reason </a>
   
                         <%  }else if (order.status == 'Product Returned' ){%>
@@ -128,6 +130,10 @@
     </form>
     </div>
   </div>
+
+
+
+
                     </tr>
                     <%
                   })

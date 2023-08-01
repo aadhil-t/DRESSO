@@ -288,11 +288,23 @@ const resubmitPassword = async (req, res,next) => {
         const categorydata = await Category.find({})
         const session = req.session.user_id
         const userData = await User.findById(session)
-        res.render('shopPage',{
-            session,
-            productData:productdata,
-            categoryData:categorydata,
-            user:userData,
+        const page = parseInt(req.query.page) || 1;
+        const limit =2;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const productCount = productdata.length;
+        const totalPages = Math.ceil(productCount / limit);
+        const paginatedProducts = productdata.slice(startIndex, endIndex);
+        console.log(page);
+    
+        res.render("shopPage", {
+          userData: userData,
+          categoryData: categorydata,
+          user:userData,
+          session,
+          productData: paginatedProducts,
+          currentPage: page,
+          totalPages: totalPages,
         });
     } catch (error) {
        next(error)
@@ -346,6 +358,40 @@ const resubmitPassword = async (req, res,next) => {
   }
 
 
+  const filterCategory = async(req,res,next)=>{
+    try {
+      const id = req.params.id
+      console.log(id);
+    const session = req.session.user_id
+    const catData = await Category.find({is_delete:false })
+    const userData = await User.findById(session)
+    const productData = await Product.find({category:id,is_delete: false }).populate('category')
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = 2;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const productCount = productData.length;
+    const totalPages = Math.ceil(productCount / limit);
+    const paginatedProducts = productData.slice(startIndex, endIndex);
+    
+    if (catData.length > 0) {
+      console.log(catData);
+      console.log(productData);
+      res.render("shopPage",{session,user:userData, productData: paginatedProducts,
+        currentPage: page,
+        totalPages: totalPages,
+        categoryData:catData,})
+    } else {
+      res.render("shopPage",{session,user:userData,productData:[],categoryData:catData})
+
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+
 module.exports = {
     loadhome,
     loadLogin,
@@ -362,4 +408,5 @@ module.exports = {
     forgotVerifyMail,
     verifyForgotMail,
     resubmitPassword,
-}
+    filterCategory,
+}   

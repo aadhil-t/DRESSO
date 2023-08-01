@@ -46,11 +46,12 @@ const loadCart = async (req, res) => {
   };
   
 
-const addtoCart = async (req, res) => {
+const addtoCart = async (req,res,next) => {
     try {
       const userId = req.session.user_id;
       const userData = await User.findOne({ _id: userId });
       const productId = req.body.id;
+      console.log(productId);
       const productData = await Product.findOne({ _id: productId });
       const productStock = productData.productStock;
  
@@ -83,7 +84,7 @@ const addtoCart = async (req, res) => {
          if(productData.offPrice > 0){
           newPrice = productData.offPrice
           }else{
-            newPrice = productData.price
+            newPrice = productData.productPrice
           }
 
       if(cartProduct){
@@ -107,7 +108,7 @@ const addtoCart = async (req, res) => {
   
       res.json({ success: true });
     } catch (error) {
-      console.log(error.message);
+      next(error)
     }
   };
   
@@ -177,14 +178,13 @@ const addtoCart = async (req, res) => {
       const cartData = await Cart.findOne({userId:session});
       console.log(session);
 
-      if(cartData){
-        const cartDelete = await Cart.deleteOne({userId:session})
-      }else{
-        const pullCart = await Cart.updateOne(
-          {userId:session},
-          {$pull: {products : {productid: proId}}}
-          );
-      }
+      if (cartData.products.length === 1) {
+        await Cart.deleteOne({userId:session})
+        
+   } else {
+    const found = await Cart.updateOne({userId:session},{$pull:{products:{productid:proId}}})
+
+   }
       res.json({success: true});
     } catch (error) {
       console.log(error.message);

@@ -260,6 +260,48 @@ const saleSort = async(req,res)=>{
 }
 
 
+
+const rangeSort = async(req,res) =>{
+  try {
+    const adminData = await User.findById({ _id: req.session.auser_id });
+    const from = req.body.from;
+    const to = req.body.to;
+   
+    const order = await Order.aggregate([
+      { $unwind: "$products" },
+      {$match: {
+        'products.status': 'Delivered',
+        $and: [
+        { 'products.deliveryDate': { $gt: new Date(from)} },
+        { 'products.deliveryDate': { $lt: new Date(to) } }
+        ]
+      }},
+      { $sort: { date: -1 } },
+      {
+        $lookup: {
+        from: 'products',
+        let: { productid: { $toObjectId: '$products.productid' } },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$_id', '$$productid'] } } }
+        ],
+        as: 'products.productDetails'
+        }
+      },  
+      {
+        $addFields: {
+        'products.productDetails': { $arrayElemAt: ['$products.productDetails', 0] }
+        }
+      }
+      ]);
+
+    res.render("salesReport", { order ,admin:adminData });
+   
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 module.exports ={
     loadhome,
     loaduserlist,
@@ -271,4 +313,5 @@ module.exports ={
     unblock,
     loadSalesReport,
     saleSort,
+    rangeSort,
 }

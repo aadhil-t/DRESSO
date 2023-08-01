@@ -7,7 +7,7 @@ const { adminLogout } = require('./admincontroller');
 
 
        // ------------ LOAD COUPON ------------//
-const loadCoupon = async(req,res)=>{
+const loadCoupon = async(req,res,next)=>{
     try {
         const adminData = req.session.auser_id
         const coupon = await Coupon.find({})
@@ -17,14 +17,24 @@ const loadCoupon = async(req,res)=>{
             res.render("couponPage",{admin:adminData,coupon:[]})
         }
     } catch (error) {
-        console.log(error.message);
+        next(error)
     }
 }
 
 
        // ------------ INSERT COUPON ------------//
-const addCoupon = async(req,res)=>{
+const addCoupon = async(req,res,next)=>{
     try {
+        const adminData = await User.findById(req.session.auser_id);
+        const couponData = await Coupon.find()
+
+
+        const existCode = await Coupon.findOne({couponCode: req.body.couponCode})
+  
+        if(existCode){
+                return res.render('couponPage',{admin:adminData, coupon:couponData, message:"coupon code already used"})
+        }
+      
         const coupon = new Coupon({
             couponName: req.body.couponName,
             couponCode: req.body.couponCode,
@@ -33,20 +43,21 @@ const addCoupon = async(req,res)=>{
             startDate: req.body.startDate,
             expiryDate: req.body.expiryDate
         })
-        const couponData = await coupon.save()
-        if(couponData){
+        const couponDatas = await coupon.save()
+       
+        if(couponDatas){
             res.redirect('/admin/couponLoad')
         }else{
             res.redirect('/admin/couponLoad')
         }
     } catch (error) {
-        console.log(error.message);
+        next(error)
     }
 }
 
 
        // ------------ EDIT COUPON ------------//
-const editCoupon = async(req,res)=>{
+const editCoupon = async(req,res,next)=>{
     try {
         const id = req.params.id
         const editCoupon = await Coupon.findByIdAndUpdate({_id:id},{$set:{
@@ -63,12 +74,12 @@ const editCoupon = async(req,res)=>{
             res.redirect('/admin/couponLoad')
         }
     } catch (error) {
-        console.log(error.message);
+        next(error)
     }
 }
 
        // ------------ DELETE COUPON ------------//
-const deleteCoupon = async(req,res)=>{
+const deleteCoupon = async(req,res,next)=>{
     try {
         const id = req.body.id
         const deleteCoupon = await Coupon.findByIdAndDelete(id)
@@ -78,7 +89,7 @@ const deleteCoupon = async(req,res)=>{
             res.redirect('/admin/couponLoad')
         }
     } catch (error) {
-        console.log(error.message);
+        next(error)
     }
 }
 
@@ -116,7 +127,7 @@ const applyCoupon = async(req,res,next)=>{
 }
 
 
-const addOffer = async(req,res)=>{
+const addOffer = async(req,res,next)=>{
     try {
         const id = req.body.id
         const offName = req.body.offName
@@ -139,7 +150,7 @@ const addOffer = async(req,res)=>{
             res.redirect('/admin/productList')
         }
     } catch (error) {
-        console.log(error.message);
+        next(error)
     }
 }
  

@@ -1,6 +1,180 @@
 <%- include("../userLayouts/userHeader.ejs")  %>
 <%- include("../userLayouts/userNavbar.ejs")  %>
 
+<style>
+  body {
+    color: #000;
+    overflow-x: hidden;
+    height: 100%;
+    background-color: #fff;
+    background-repeat: no-repeat;
+}
+
+.modal-lg {
+  max-width: 100%;
+}
+
+/* Increase modal size for medium screens */
+@media screen and (max-width: 1200px) {
+  .modal-lg {
+    max-width: 90%;
+  }
+}
+
+/* Increase modal size for small screens */
+@media screen and (max-width: 768px) {
+  .modal-lg {
+    max-width: 95%;
+  }
+}
+
+.card {
+    z-index: 0;
+    background-color: #ECEFF1;
+    padding-bottom: 20px;
+    margin-top: 90px;
+    margin-bottom: 90px;
+    border-radius: 10px;
+}
+
+.top {
+    padding-top: 40px;
+    padding-left: 13% !important;
+    padding-right: 13% !important;
+}
+
+/*Icon progressbar*/
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #455A64;
+    padding-left: 0px;
+    margin-top: 30px;
+} 
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 13px;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400;
+}
+
+#progressbar .step0:before {
+    font-family: FontAwesome;
+    content: "\f10c";
+    color: #fff;
+}
+
+#progressbar li:before {
+    width: 40px;
+    height: 40px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    background: #C5CAE9;
+    border-radius: 50%;
+    margin: auto;
+    padding: 0px;
+}
+
+/*ProgressBar connectors*/
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 12px;
+    background: #C5CAE9;
+    position: absolute;
+    left: 0;
+    top: 16px;
+    z-index: -1;
+}
+
+#progressbar li:last-child:after {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: absolute;
+    left: -50%;
+}
+
+#progressbar li:nth-child(2):after, #progressbar li:nth-child(3):after {
+    left: -50%;
+}
+
+#progressbar li:first-child:after {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: absolute;
+    left: 50%;
+}
+
+#progressbar li:last-child:after {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#progressbar li:first-child:after {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+/*Color number of the step and the connector before it*/
+#progressbar li.active:before, #progressbar li.active:after {
+    background: #651FFF;
+}
+
+#progressbar li.active:before {
+    font-family: FontAwesome;
+    content: "\f00c";
+}
+
+.icon {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+}
+
+.icon-content { 
+    padding-bottom: 20px;
+}
+
+/* Custom CSS for modal-dialog and modal-content */
+.modal-dialog {
+  max-width: 800px; /* Adjust the width as needed */
+}
+
+.modal-content {
+  width: 100%;
+  height: 100%;
+}
+
+/* Center the container within the modal-body */
+.modal-bod {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    .top {
+      padding-left: 5% !important;
+      padding-right: 5% !important;
+    }
+
+    .icon-content {
+      width: 100%;
+      text-align: center;
+    }
+
+    .modal-bod {
+      justify-content: center;
+    }
+</style>
+
 
 
 <div class="page-wrapper">
@@ -65,17 +239,20 @@
                             <td><%= order.productPrice %></td>
                             <td><%= order.status %></td>
                             <td>
-                               <% if(order.status == 'cancelled' ) {%> 
-                                     <p class="text-danger">cancelled</p>
+                               <% if(order.status == 'canceled' ) {%> 
+                                     <p class="text-danger">canceled</p>
                                 <% }else if (order.status == 'Delivered'){ %>
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#returnModal-<%= order._id %>" >Return</button>
                                     <% }else if (order.status == 'Product Returned'){ %>
                                         <p class="text-success">Product Returned</p>
                                  <%  }else if( order.status == 'out for delivery'){%> 
-                                    <p class="text-success">out for delivery</p>
                                     <% }else{ %>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-<%= order._id %>" > Cancel </button>                          
-                               <% } %>                              
+                               <% } %>  
+                               <% if(order.status != 'canceled' && order.status != 'Product Returned') {%>     
+                               <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Order Tracking</a>
+                               <% } %>
+                        
                            </td>
                                                   <!-- Modal for cancel Order -->
 
@@ -131,7 +308,88 @@
     </form>
     </div>
   </div>
-                        </tr>
+
+  <!-- Modal for order tracking -->
+  <div class="modal fade modal-lg" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-titl" id="exampleModalToggleLabel">Order Tracking</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-bod">
+        <div class="container px-1 px-md-4 py-5 mx-auto">
+    <div class="card">
+        <div class="row d-flex justify-content-between px-3 top">
+            <div class="d-flex">
+                <h5>ORDER <span class="text-primary font-weight-bold">#<%= order._id %></span></h5>
+            </div>
+           
+        </div>
+        <!-- Add class 'active' to progress -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-12">
+            <ul id="progressbar" class="text-center">
+              <% if( order.status == 'out for delivery'){%> 
+                <li class="active step0"></li>
+                <li class="active step0"></li>
+                <li class="active step0"></li>
+                <li class="step0"></li>
+                <% } else if( order.status == 'placed'){%> 
+                  <li class="active step0"></li>
+                <li class="step0"></li>
+                <li class="step0"></li>
+                <li class="step0"></li>
+                <% } else if( order.status == 'shiped'){%> 
+                  <li class="active step0"></li>
+                <li class="active step0"></li>
+                <li class="step0"></li>
+                <li class="step0"></li>
+                <% } else { %>
+                  <li class="active step0"></li>
+                <li class="active step0"></li>
+                <li class="active step0"></li>
+                <li class="active step0"></li>
+                <% } %>
+
+            </ul>
+            </div>
+        </div>
+        <div class="row justify-content-between top">
+            <div class="row d-flex icon-content">
+                <img class="icon" src="https://i.imgur.com/9nnc9Et.png">
+                <div class="d-flex flex-column">
+                    <p class="font-weight-bold">Order<br>Placed</p>
+                </div>
+            </div>
+            <div class="row d-flex icon-content">
+                <img class="icon" src="https://i.imgur.com/u1AzR7w.png">
+                <div class="d-flex flex-column">
+                    <p class="font-weight-bold">Order<br>Shipped</p>
+                </div>
+            </div>
+            <div class="row d-flex icon-content">
+                <img class="icon" src="https://i.imgur.com/TkPm63y.png">
+                <div class="d-flex flex-column">
+                    <p class="font-weight-bold">Out for <br>Delivery</p>
+                </div>
+            </div>
+            <div class="row d-flex icon-content">
+                <img class="icon" src="https://i.imgur.com/HdsziHP.png">
+                <div class="d-flex flex-column">
+                    <p class="font-weight-bold">Order<br>Arrived</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+   
+  </div>
+</div>
+</div>
+
+</tr>
 
                          <%   }) }%>
                         </tbody>
