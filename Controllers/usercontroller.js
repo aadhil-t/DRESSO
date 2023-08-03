@@ -334,14 +334,14 @@ const resubmitPassword = async (req, res,next) => {
             );
         }
         console.log(checkWishlist);
-        res.render('singleproduct',{
+        res.render('singleProduct',{
             session,
             user:userData,
             product:productData,
             wishlist:checkWishlist,
         })
     } catch (error) {
-        console.log(error.message);
+      next(error)
     }
   }
 
@@ -350,8 +350,8 @@ const resubmitPassword = async (req, res,next) => {
   const userProfile = async(req,res)=>{
     try {
         const session = req.session.user_id;
-        const userData = await User.findById({ _id: req.session.user_id,session});
-        res.render("userprofile", { user:userData, session });
+        const userData = await User.findById(session);
+        res.render("userProfile", { user:userData, session });
     } catch (error) {
         console.log(error.message);
     }

@@ -10,7 +10,7 @@ const couponSchema = new mongoose.Schema({
         required:true,
     },
     couponCode:{
-        type:String,
+        type:Number,
         required:true,
     },
     discountPercentage:{
@@ -18,7 +18,7 @@ const couponSchema = new mongoose.Schema({
         required:true,
     },
     criteria:{
-        type:String,
+        type:Number,
         require:true,
     },
     startDate:{

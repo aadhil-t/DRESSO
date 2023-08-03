@@ -59,6 +59,36 @@ const addCoupon = async(req,res,next)=>{
        // ------------ EDIT COUPON ------------//
 const editCoupon = async(req,res,next)=>{
     try {
+
+        const adminData = await User.findById(req.session.auser_id);
+        const couponData = await Coupon.find()
+
+         //discount pecentage validation
+ 
+         if(req.body.discountPercentage < 0  || req.body.criteria < 0  || req.body.couponCode < 0){
+            return res.render('couponPage',{ admin:adminData , coupon:couponData , message:'negative not allowed'})
+        }else if(req.body.discountPercentage > 80){
+            return res.render('couponPage',{ admin:adminData , coupon:couponData , message:'maximum discount is 80 !!!'})
+
+        }
+
+
+        //trim
+
+        if (req.body.couponName.trim() =='' || req.body.couponCode.trim() == '') {
+            return res.render('couponPage',{ admin:adminData , coupon:couponData , message:'white space not allowed'})
+
+        }
+
+        // date validation 
+
+        const startDate = new Date(req.body.startDate);
+        const endDate = new Date(req.body.expiryDate);
+
+        if (isNaN(startDate) || startDate < new Date() || isNaN(endDate) || endDate <  new Date() ) {
+          return res.render('couponPage', { admin: adminData , coupon: couponData , message: 'Invalid date' });
+        }
+
         const id = req.params.id
         const editCoupon = await Coupon.findByIdAndUpdate({_id:id},{$set:{
             couponName: req.body.couponName,
